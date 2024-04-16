@@ -6,3 +6,16 @@ myfirstmlproject.egg-info/dependency_links.txt
 myfirstmlproject.egg-info/requires.txt
 myfirstmlproject.egg-info/top_level.txt
 src/__init__.py
+src/myfirstmlproject/__init__.py
+src/myfirstmlproject/exception.py
+src/myfirstmlproject/logger.py
+src/myfirstmlproject/utils.py
+src/myfirstmlproject/utils.pyapp.py
+src/myfirstmlproject/components/__init__.py
+src/myfirstmlproject/components/data_ingestion.py
+src/myfirstmlproject/components/data_trasnformation.py
+src/myfirstmlproject/components/model_monitering.py
+src/myfirstmlproject/components/model_trainer.py
+src/myfirstmlproject/pipelines/__init__.py
+src/myfirstmlproject/pipelines/prediction_pipeline.py
+src/myfirstmlproject/pipelines/training_pipeline.py
