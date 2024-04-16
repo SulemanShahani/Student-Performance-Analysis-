@@ -1,11 +1,11 @@
 import os
-import sys
+
 from src.myfirstmlproject.exception import CustomException
 from src.myfirstmlproject.logger import logging
 import pandas as pd
-from src.myfirstmlproject.utils import read_sql_data
-import sqlalchemy
-from sqlalchemy import create_engine
+
+
+
 from sklearn.model_selection import train_test_split
 
 from dataclasses import dataclass
@@ -23,20 +23,13 @@ class DataIngestion:
 
     def initiate_data_ingestion(self):
         try:
-            ##reading the data from mysql
-            file_path = os.path.join('notebook', 'data', 'raw.csv')
-
-            if os.path.exists(r"C:\Users\SULEMAN\Desktop\krish naik files\New folder\notebook\raw.csv"):
-                df = pd.read_csv(r"C:\Users\SULEMAN\Desktop\krish naik files\New folder\notebook\raw.csv")
-                # Proceed with further processing
-                logging.info("Reading completed from CSV file")
-            else:
-                logging.error("File not found: %s", file_path)
-    # Handle the error or raise an exception
      
-            #df=read_sql_data()
+     
+            
+            
+            
             df=pd.read_csv(os.path.join('notebook/data','raw.csv'))
-            logging.info("Reading completed mysql database")
+            logging.info("Reading database is completed")
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
 
@@ -45,7 +38,7 @@ class DataIngestion:
             train_set.to_csv(self.ingestion_config.train_data_path,index=False,header=True)
             test_set.to_csv(self.ingestion_config.test_data_path,index=False,header=True)
 
-            logging.info("Data Ingestion is completed")
+            logging.info("splitting data into train and test set is completed")
 
             return(
                 self.ingestion_config.train_data_path,

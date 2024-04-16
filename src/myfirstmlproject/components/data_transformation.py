@@ -61,11 +61,24 @@ class DataTransformation:
             return preprocessor
             
 
-        except Exception as e:
-            raise CustomException(e,sys)
+        except Exception as ex:
+            error_message = "An unexpected error occurred during data ingestion"
+            error_details = str(ex)  # Include the original exception message for additional context
+            logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
+            raise CustomException(error_message, error_details)
+
         
-    def initiate_data_transormation(self,train_path,test_path):
+    def initiate_data_transformation(self,train_path,test_path):
         try:
+
+            logging.info("Starting the data transformation process.")
+            data_transformation = DataTransformation()
+            train_path = r"artifacts\train.csv" 
+            test_path = r"artifacts\test.csv"
+
+
+
+
             train_df=pd.read_csv(train_path)
             test_df=pd.read_csv(test_path)
 
@@ -119,6 +132,10 @@ class DataTransformation:
 
 
 
-        except Exception as e:
-            raise CustomException(sys,e)
+        except Exception as ex:
+            error_message = "An unexpected error occurred during data ingestion"
+            error_details = str(ex)  # Include the original exception message for additional context
+            logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
+            raise CustomException(error_message, error_details)
+
 

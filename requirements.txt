@@ -10,5 +10,9 @@ xgboost
 mlflow
 scikit-learn
 sqlalchemy
+seaborn
+matplotlib
+catboost
+xgboost
 
 #-e.
