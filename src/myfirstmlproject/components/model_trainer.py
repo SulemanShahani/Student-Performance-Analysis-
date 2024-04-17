@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
 import numpy as np
+import pickle
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 from catboost import CatBoostRegressor
 from sklearn.ensemble import (
@@ -117,7 +118,7 @@ class ModelTrainer:
 
             best_params = params[actual_model]
 
-            mlflow.set_registry_uri("https://dagshub.com/krishnaik06/mlprojecthindi.mlflow")
+            mlflow.set_registry_uri("https://dagshub.com/csspreparation1994/myfirstproject.mlflow")
             tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
             # mlflow
@@ -146,34 +147,14 @@ class ModelTrainer:
                 else:
                     mlflow.sklearn.log_model(best_model, "model")
 
+                    # Save the model as model.pkl in the artifacts directory
+                    model_file_path = os.path.join("artifacts", "model.pkl")
+                    with open(model_file_path, "wb") as f:
+                        pickle.dump(best_model, f)
 
 
 
-            if best_model_score<0.6:
-                raise CustomException("No best model found")
-            logging.info(f"Best found model on both training and testing dataset")
-            logging.info("Model training started...")
-            logging.info(f"Training dataset size: {len(X_train)}")
-            logging.info(f"Test dataset size: {len(X_test)}")
-            logging.info(f"Selected model: {best_model_name}")
-            logging.info(f"Selected model parameters: {best_params}")
-            logging.info(f"Evaluation metrics: RMSE = {rmse}, MAE = {mae}, R2 = {r2}")
-
-
-            save_object(
-                file_path=self.model_trainer_config.trained_model_file_path,
-                obj=best_model
-            )
-
-            predicted=best_model.predict(X_test)
-
-            r2_square = r2_score(y_test, predicted)
-            return r2_square
-
-
-
-        except Exception as ex:
-            error_message = "An unexpected error occurred during data ingestion"
-            error_details = str(ex)  # Include the original exception message for additional context
-            logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
-            raise CustomException(error_message, error_details)
+        except Exception as e:
+            error_message = f"An unexpected error occurred: {str(e)}"
+            logging.exception("An unexpected error occurred during model training", exc_info=True)
+            raise CustomException(error_message) 
