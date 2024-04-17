@@ -33,30 +33,7 @@ if None in [host, user, password, db]:
 
 
 
-def read_sql_data():
-    logging.info("Reading SQL database started")
-    try:
-        mydb=pymysql.connect(
-            host=host,
-            user=user,
-            password=password,
-            db=db
-        )
-        logging.info("Connection Established: %s", mydb)
 
-        
-        df=pd.read_sql_query('Select * from students',mydb)
-        print(df.head())
-
-        return df
-
-
-
-    except Exception as ex:
-            error_message = "An unexpected error occurred during data ingestion"
-            error_details = str(ex)  # Include the original exception message for additional context
-            logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
-            raise CustomException(error_message, error_details)
 
     
 def save_object(file_path, obj):
