@@ -108,4 +108,17 @@ def evaluate_models(X_train, y_train,X_test,y_test,models,param):
             error_details = str(ex)  # Include the original exception message for additional context
             logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
             raise CustomException(error_message, error_details)
+    
+
+
+def load_object(file_path):
+    try:
+        with open(file_path, "rb") as file_obj:
+            return pickle.load(file_obj)
+
+    except Exception as ex:
+            error_message = "An unexpected error occurred during data ingestion"
+            error_details = str(ex)  # Include the original exception message for additional context
+            logging.exception("Custom Exception occurred: %s", error_details)  # Log the original exception traceback
+            raise CustomException(error_message, error_details)
 
