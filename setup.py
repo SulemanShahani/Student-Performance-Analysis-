@@ -20,7 +20,7 @@ setup(
     name='myfirstmlproject',
     version='0.0.1',
     author='suleman',
-    author_email='csspreparation1994@gmail.com',
+    author_email='muhammadsuleman94@hotmail.com',
     packages=find_packages(),
     install_requires=get_requirements('requirements.txt')
 )
