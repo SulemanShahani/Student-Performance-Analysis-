@@ -1,103 +1,38 @@
-name: workflow
+build-and-push-ecr-image:
+  name: Continuous Delivery
+  needs: integration
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'README.md'
+    - name: Install Utilities
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq unzip
 
-permissions:
-  id-token: write
-  contents: read
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-jobs:
-  integration:
-    name: Continuous Integration
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Lint code
-        run: echo "Linting repository"
+    - name: Set ECR URI Environment Variable
+      run: echo "ECR_URI=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}" >> $GITHUB_ENV
 
-      - name: Run unit tests
-        run: echo "Running unit tests"
-
-  build-and-push-ecr-image:
-    name: Continuous Delivery
-    needs: integration
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install Utilities
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq unzip
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Set ECR URI Environment Variable
-        run: echo "ECR_URI=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}" >> $GITHUB_ENV
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          IMAGE_TAG: latest
-          ECR_URI: ${{ env.ECR_URI }}
-        run: |
-          # Build the Docker image
-          docker build -t $ECR_URI:$IMAGE_TAG .
-          # Push the Docker image to ECR
-          docker push $ECR_URI:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_URI:$IMAGE_TAG"
-
-  Continuous-Deployment:
-    needs: build-and-push-ecr-image
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      
-      - name: Set ECR URI Environment Variable
-        run: echo "ECR_URI=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}" >> $GITHUB_ENV
-
-      - name: Pull latest images
-        run: |
-          docker pull ${{ env.ECR_URI }}:latest
-
-      - name: Run Docker Image to serve users
-        run: |
-          docker run -d -p 8080:8080 --ipc="host" --name=mltest \
-            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            -e AWS_REGION=${{ secrets.AWS_REGION }} \
-            ${{ env.ECR_URI }}:latest
-
-      - name: Clean previous images and containers
-        run: |
-          docker system prune -f
-
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        IMAGE_TAG: latest
+        ECR_URI: ${{ env.ECR_URI }}
+      run: |
+        # Build the Docker image
+        docker build -t $ECR_URI:$IMAGE_TAG .
+        # Push the Docker image to ECR
+        docker push $ECR_URI:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_URI:$IMAGE_TAG"
