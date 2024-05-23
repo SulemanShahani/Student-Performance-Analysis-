@@ -1,8 +1,14 @@
-FROM python:Python 3.12.3-slim-buster
+FROM python:3.12.3-slim-buster
+
 WORKDIR /app
+
 COPY . /app
 
-RUN apt update -y
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && pip install -r requirements.txt
-CMD ["python3", "application.py"]
+# Expose the port
+EXPOSE 8080
+
+# Command to run the application
+CMD ["python", "application.py"]
