@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, jsonify
 import numpy as np
 import pandas as pd
 
+
+
 from sklearn.preprocessing import StandardScaler
 from src.myfirstmlproject.pipelines.prediction_pipeline import CustomData, PredictPipeline
 
