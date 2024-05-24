@@ -58,8 +58,8 @@ jobs:
           IMAGE_TAG: latest
           ECR_URI: ${{ env.ECR_URI }}
         run: |
-          # Build the Docker image
-          docker build -t $ECR_URI:$IMAGE_TAG .
+          # Build the Docker image without caching
+          docker build --no-cache -t $ECR_URI:$IMAGE_TAG .
           # Push the Docker image to ECR
           docker push $ECR_URI:$IMAGE_TAG
           echo "::set-output name=image::$ECR_URI:$IMAGE_TAG"
@@ -100,4 +100,5 @@ jobs:
       - name: Clean previous images and containers
         run: |
           docker system prune -f
+
 
