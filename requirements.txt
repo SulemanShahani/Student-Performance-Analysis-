@@ -1,6 +1,7 @@
 numpy
 pandas
 python-dotenv
+streamlit
 mysql-connector-python
 pymysql
 scikit-learn
