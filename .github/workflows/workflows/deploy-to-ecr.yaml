@@ -63,6 +63,8 @@ jobs:
           # Push the Docker image to ECR
           docker push $ECR_URI:$IMAGE_TAG
           echo "::set-output name=image::$ECR_URI:$IMAGE_TAG"
+        options:
+          cache: 'none' # Disable caching for this step
 
   Continuous-Deployment:
     needs: build-and-push-ecr-image
@@ -100,5 +102,4 @@ jobs:
       - name: Clean previous images and containers
         run: |
           docker system prune -f
-
 
