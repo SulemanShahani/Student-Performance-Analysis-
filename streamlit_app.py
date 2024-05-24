@@ -1,5 +1,11 @@
 import streamlit as st
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 from src.myfirstmlproject.pipelines.prediction_pipeline import CustomData, PredictPipeline
 
 # Function to make predictions
