@@ -57,7 +57,7 @@ jobs:
         env:
           IMAGE_TAG: latest
           ECR_URI: ${{ env.ECR_URI }}
-        working-directory: ./docker  # Change working directory to "docker"
+        
         run: |
           # Build the Docker image without caching
           docker build --no-cache -t $ECR_URI:$IMAGE_TAG .
